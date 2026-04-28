@@ -2,16 +2,14 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../../config/database";
 import { NotFoundError, ForbiddenError } from "../../lib/errors";
 
+// Изменено: принимаем объект с данными, чтобы соответствовать вызову из роутера
 export async function createReview(
     userId: string,
-    orderItemId: string,
-    rating: number,
-    comment?: string,
+    data: { orderItemId: string; rating: number; comment?: string },
 ) {
-    // Указываем тип для tx: Prisma.TransactionClient
     return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         const orderItem = await tx.orderItem.findUnique({
-            where: { id: orderItemId },
+            where: { id: data.orderItemId },
             include: { order: true },
         });
 
@@ -23,9 +21,9 @@ export async function createReview(
             data: {
                 userId,
                 companyId: orderItem.companyId,
-                orderItemId,
-                rating,
-                comment,
+                orderItemId: data.orderItemId,
+                rating: data.rating,
+                comment: data.comment,
             },
         });
 
@@ -33,10 +31,45 @@ export async function createReview(
     });
 }
 
-export async function getCompanyReviews(companyId: string) {
-    return prisma.review.findMany({
-        where: { companyId },
-        include: { user: { include: { profile: true } } },
-        orderBy: { createdAt: "desc" },
+// Изменено: добавлена поддержка страницы (page)
+export async function getCompanyReviews(
+    companyId: string,
+    page = 1,
+    pageSize = 10,
+) {
+    const skip = (page - 1) * pageSize;
+
+    const [data, total] = await Promise.all([
+        prisma.review.findMany({
+            where: { companyId },
+            include: { user: { include: { profile: true } } },
+            orderBy: { createdAt: "desc" },
+            skip,
+            take: pageSize,
+        }),
+        prisma.review.count({ where: { companyId } }),
+    ]);
+
+    return {
+        data,
+        total,
+        page,
+        pageSize,
+        totalPages: Math.ceil(total / pageSize),
+    };
+}
+
+// Добавлено: функция модерации, которой не хватало
+export async function moderateReview(id: string, isApproved: boolean) {
+    const review = await prisma.review.findUnique({ where: { id } });
+    if (!review) throw new NotFoundError("Review not found");
+
+    return prisma.review.update({
+        where: { id },
+        data: {
+            // Предполагаю, что в вашей схеме поле называется status или isVisible
+            // Если поля другие — замените под вашу схему БД
+            status: isApproved ? "APPROVED" : "REJECTED",
+        } as any,
     });
 }
