@@ -26,7 +26,7 @@ export function createApp() {
 
   app.use(helmet());
   app.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', env.FRONTEND_URL],
+    origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', env.FRONTEND_URL, 'https://mb-frontend-roan.vercel.app'],
     credentials: true,
   }));
   app.use(morgan('dev'));
