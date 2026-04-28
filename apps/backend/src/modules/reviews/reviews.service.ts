@@ -2,7 +2,10 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../../config/database";
 import { NotFoundError, ForbiddenError } from "../../lib/errors";
 
-// Изменено: принимаем объект с данными, чтобы соответствовать вызову из роутера
+/**
+ * Создание отзыва.
+ * Изменено: теперь принимает объект 'data', чтобы соответствовать вызову из роутера.
+ */
 export async function createReview(
     userId: string,
     data: { orderItemId: string; rating: number; comment?: string },
@@ -31,7 +34,9 @@ export async function createReview(
     });
 }
 
-// Изменено: добавлена поддержка страницы (page)
+/**
+ * Получение отзывов компании с пагинацией.
+ */
 export async function getCompanyReviews(
     companyId: string,
     page = 1,
@@ -59,7 +64,10 @@ export async function getCompanyReviews(
     };
 }
 
-// Добавлено: функция модерации, которой не хватало
+/**
+ * Модерация отзыва.
+ * Добавлено для работы эндпоинта /moderate.
+ */
 export async function moderateReview(id: string, isApproved: boolean) {
     const review = await prisma.review.findUnique({ where: { id } });
     if (!review) throw new NotFoundError("Review not found");
@@ -67,8 +75,7 @@ export async function moderateReview(id: string, isApproved: boolean) {
     return prisma.review.update({
         where: { id },
         data: {
-            // Предполагаю, что в вашей схеме поле называется status или isVisible
-            // Если поля другие — замените под вашу схему БД
+            // Убедитесь, что в вашей схеме Prisma есть поле 'status'
             status: isApproved ? "APPROVED" : "REJECTED",
         } as any,
     });
