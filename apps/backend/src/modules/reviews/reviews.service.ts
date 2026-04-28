@@ -24,7 +24,7 @@ export async function createReview(
             data: {
                 userId,
                 companyId: orderItem.companyId,
-                orderItemId: data.orderItemId,
+                orderId: orderItem.orderId,
                 rating: data.rating,
                 comment: data.comment,
             },
