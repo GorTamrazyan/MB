@@ -34,6 +34,7 @@ export function createApp() {
   app.use(cookieParser());
   app.use(globalLimiter);
 
+  app.get('/', (req, res) => res.json({ name: 'Tina Marketplace API', version: '1.0.0' }));
   app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
   app.use('/api/v1/auth', authRouter);
