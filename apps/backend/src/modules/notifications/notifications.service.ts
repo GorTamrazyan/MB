@@ -26,7 +26,7 @@ export async function createNotification(
   data?: Record<string, unknown>
 ) {
   const notification = await prisma.notification.create({
-    data: { userId, type, title, message, data },
+    data: { userId, type, title, message, data: data as any },
   });
 
   await redis.publish(`notifications:${userId}`, JSON.stringify(notification));

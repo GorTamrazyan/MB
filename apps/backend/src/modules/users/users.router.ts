@@ -8,11 +8,13 @@ router.use(authenticate);
 
 router.get('/me', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = await prisma.user.findUnique({
+    const raw = await prisma.user.findUnique({
       where: { id: req.user!.userId },
       include: { profile: true },
-      omit: { passwordHash: true, refreshTokenHash: true, verificationToken: true, resetPasswordToken: true },
     });
+    if (!raw) { res.json({ success: true, data: null }); return; }
+    const { passwordHash, refreshTokenHash, verificationToken, resetPasswordToken, ...user } = raw;
+    void passwordHash; void refreshTokenHash; void verificationToken; void resetPasswordToken;
     res.json({ success: true, data: user });
   } catch (err) { next(err); }
 });
