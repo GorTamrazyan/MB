@@ -22,6 +22,8 @@ import adminRouter from './modules/admin/admin.router';
 export function createApp() {
   const app = express();
 
+  app.set('trust proxy', 1);
+
   app.use(helmet());
   app.use(cors({
     origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', env.FRONTEND_URL],
