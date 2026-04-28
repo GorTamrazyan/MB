@@ -1,0 +1,50 @@
+{
+  "name": "@tina/backend",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "migrate": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
+    "seed": "ts-node --project tsconfig.seed.json -r tsconfig-paths/register prisma/seeds/seed.ts",
+    "studio": "prisma studio",
+    "generate": "prisma generate"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.8.1",
+    "@tina/shared": "*",
+    "@types/cookie-parser": "^1.4.10",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^4.22.1",
+    "express-rate-limit": "^7.5.1",
+    "helmet": "^7.2.0",
+    "ioredis": "^5.10.1",
+    "jsonwebtoken": "^9.0.3",
+    "morgan": "^1.10.1",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.10.1",
+    "slugify": "^1.6.8",
+    "stripe": "^14.25.0",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "winston": "^3.19.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/morgan": "^1.9.9",
+    "@types/multer": "^1.4.11",
+    "@types/node": "^20.11.5",
+    "@types/nodemailer": "^6.4.14",
+    "prisma": "^5.8.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.3.3"
+  }
+}
