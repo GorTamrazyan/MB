@@ -12,34 +12,38 @@ export class CacheService {
   }
 
   async getOrSet<T>(key: string, ttlSeconds: number, fetcher: () => Promise<T>): Promise<T> {
-    const cached = await this.get<T>(key);
-    if (cached !== null) return cached;
-    const fresh = await fetcher();
-    await this.set(key, fresh, ttlSeconds);
-    return fresh;
+    try {
+      const cached = await this.get<T>(key);
+      if (cached !== null) return cached;
+      const fresh = await fetcher();
+      await this.set(key, fresh, ttlSeconds).catch(() => {});
+      return fresh;
+    } catch {
+      return fetcher();
+    }
   }
 
   async invalidate(key: string): Promise<void> {
-    await redis.del(key);
+    try { await redis.del(key); } catch {}
   }
 
   async invalidatePattern(pattern: string): Promise<void> {
-    let cursor = '0';
-    do {
-      const [nextCursor, keys] = await redis.scan(cursor, 'MATCH', pattern, 'COUNT', 100);
-      cursor = nextCursor;
-      if (keys.length > 0) {
-        await redis.del(...keys);
-      }
-    } while (cursor !== '0');
+    try {
+      let cursor = '0';
+      do {
+        const [nextCursor, keys] = await redis.scan(cursor, 'MATCH', pattern, 'COUNT', 100);
+        cursor = nextCursor;
+        if (keys.length > 0) await redis.del(...keys);
+      } while (cursor !== '0');
+    } catch {}
   }
 
   async increment(key: string, amount = 1): Promise<number> {
-    return redis.incrby(key, amount);
+    try { return await redis.incrby(key, amount); } catch { return 0; }
   }
 
   async expire(key: string, ttlSeconds: number): Promise<void> {
-    await redis.expire(key, ttlSeconds);
+    try { await redis.expire(key, ttlSeconds); } catch {}
   }
 }
 

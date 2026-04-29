@@ -1,7 +1,8 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "./dist/seeds"
+    "outDir": "./dist/seeds",
+    "lib": ["ES2020", "dom"]
   },
   "include": ["prisma/seeds"]
 }
