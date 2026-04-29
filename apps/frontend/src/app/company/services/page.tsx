@@ -10,6 +10,7 @@ import { formatPrice } from '../../../lib/utils';
 
 export default function CompanyServicesPage() {
   const [showForm, setShowForm] = useState(false);
+  const [formError, setFormError] = useState('');
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -44,7 +45,11 @@ export default function CompanyServicesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['company-services'] });
       setShowForm(false);
+      setFormError('');
       reset();
+    },
+    onError: (err: any) => {
+      setFormError(err.response?.data?.message || 'Ошибка при сохранении услуги');
     },
   });
 
@@ -65,7 +70,8 @@ export default function CompanyServicesPage() {
 
         {showForm && (
           <div className="bg-white rounded-xl p-6 border mb-6">
-            <h2 className="font-semibold mb-4 text-gray-700">Նոր ծառայություն</h2>
+            <h2 className="font-semibold mb-4 text-gray-700">Нова услуга</h2>
+            {formError && <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-4">{formError}</div>}
             <form onSubmit={handleSubmit(d => createMutation.mutate(d))} className="grid md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
                 <input {...register('title')} placeholder="Վերնագիր *" className="w-full border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
@@ -77,9 +83,10 @@ export default function CompanyServicesPage() {
               </div>
               <div>
                 <select {...register('categoryId')} className="w-full border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  <option value="">Կատեգորիա *</option>
+                  <option value="" disabled>Категория *</option>
                   {categories?.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
+                {errors.categoryId && <p className="text-red-500 text-xs mt-1">Выберите категорию</p>}
               </div>
               <div>
                 <select {...register('priceType')} className="w-full border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
