@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import { api } from '../../../lib/api';
 import { createServiceSchema, CreateServiceInput, PriceType } from '@tina/shared';
 import { formatPrice } from '../../../lib/utils';
@@ -10,13 +11,21 @@ import { formatPrice } from '../../../lib/utils';
 export default function CompanyServicesPage() {
   const [showForm, setShowForm] = useState(false);
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const { data } = useQuery({
     queryKey: ['company-services'],
     queryFn: async () => {
-      const company = await api.get('/companies/me');
-      const { data } = await api.get(`/services?companyId=${company.data.data.id}&pageSize=100`);
-      return data;
+      try {
+        const company = await api.get('/companies/me');
+        const { data } = await api.get(`/services?companyId=${company.data.data.id}&pageSize=100`);
+        return data;
+      } catch (err: any) {
+        if (err.response?.status === 404) {
+          router.push('/company/setup');
+        }
+        throw err;
+      }
     },
   });
 
