@@ -85,6 +85,8 @@ model User {
   @@map("users")
 }
 
+
+
 model UserProfile {
   id          String   @id @default(uuid())
   userId      String   @unique
