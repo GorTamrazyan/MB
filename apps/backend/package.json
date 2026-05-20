@@ -9,7 +9,8 @@
     "migrate:deploy": "prisma migrate deploy",
     "seed": "ts-node --project tsconfig.seed.json -r tsconfig-paths/register prisma/seeds/seed.ts",
     "studio": "prisma studio",
-    "generate": "prisma generate"
+    "generate": "prisma generate",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
