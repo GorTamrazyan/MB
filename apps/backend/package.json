@@ -10,7 +10,7 @@
     "seed": "ts-node --project tsconfig.seed.json -r tsconfig-paths/register prisma/seeds/seed.ts",
     "studio": "prisma studio",
     "generate": "prisma generate",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate --no-engine"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
@@ -42,7 +42,7 @@
     "@types/multer": "^1.4.11",
     "@types/node": "^20.11.5",
     "@types/nodemailer": "^6.4.14",
-    "prisma": "^5.8.1",
+    "prisma": "^5.22.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "tsconfig-paths": "^4.2.0",
